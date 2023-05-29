@@ -6,7 +6,71 @@
     <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
 </head>
 <body>
+<div>
+    <select>
+        <option class="shang"></option>
+    </select>
+    <select>
+        <option class="city"></option>
+    </select>
+    <select>
+        <option class="qv"></option>
+    </select>
+</div>
 <script>
+    //模拟回调地狱【回调函数嵌套回调函数】
+    // axios({url:'http://hmajax.itheima.net/api/province'}).then(res=>{
+    //     let shengName=res.data.list[0];
+    //     document.getElementsByClassName('shang')[0].innerHTML=shengName;
+    //     console.log(shengName);
+    //     //基于获取的省份数据，作为下一次获取市请求的参数
+    //     axios({url:'http://hmajax.itheima.net/api/city',params:{pname:shengName}}).then(res=>{
+    //         let city=res.data.list[0];
+    //         document.getElementsByClassName('city')[0].innerHTML=city;
+    //         console.log(shengName+city);
+    //         axios({url:'http://hmajax.itheima.net/api/area',params:{pname: shengName,cname:city}}).then(res=>{
+    //             let area=res.data.list[0];
+    //             document.getElementsByClassName('qv')[0].innerHTML=area;
+    //             console.log(shengName+city+area);
+    //         })
+    //     })
+    // });
+
+
+    // promise链式调用解决回调地狱
+    // let pname;
+    // axios({url:'http://hmajax.itheima.net/api/province'}).then(res=>{
+    //      pname=res.data.list[0];
+    //     document.getElementsByClassName('shang')[0].innerHTML=pname;
+    //     return axios({url:'http://hmajax.itheima.net/api/city',params:{pname}});//then中返回了一个promise对象，根据对象状态走下一个then还是catch
+    // }).then(res=>{
+    //     let cname=res.data.list[0];
+    //     document.getElementsByClassName('city')[0].innerHTML=cname;
+    //     return axios({url:'http://hmajax.itheima.net/api/area',params: {pname,cname}});
+    // }).then(res=>{
+    //     let q=res.data.list[0];
+    //     document.getElementsByClassName('qv')[0].innerHTML=q;
+    // })
+
+
+    //async 与await （让一步代码看起来像同步一样）
+    async function  fn(){
+        try {
+            let res = await axios({url: 'http://hmajax.itheima.net/api/province'});
+            let pname = res.data.list[0];
+            document.getElementsByClassName('shang')[0].innerHTML = pname;
+            let rescity = await axios({url: 'http://hmajax.itheima.net/api/city', params: {pname}});
+            let cname = rescity.data.list[0];
+            document.getElementsByClassName('city')[0].innerHTML = cname;
+            let resqv = await axios({url: 'http://hmajax.itheima.net/api/area', params: {pname, cname}});
+            let qv = resqv.data.list[0];
+            document.getElementsByClassName('qv')[0].innerHTML = qv;
+        }
+        catch(err) {
+            console.log(err.message)
+        }
+    }
+    fn()
 
 </script>
 </body>
